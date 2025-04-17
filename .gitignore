@@ -1,0 +1,11 @@
+# 全ファイルを無視
+*
+
+# 以下だけ許可
+!.gitignore
+!README.md
+!setup.sh
+!enabled_commands.conf
+!commands/
+!commands/*.sh
+!bin/
