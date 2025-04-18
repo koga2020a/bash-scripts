@@ -12,30 +12,41 @@ BASHRC="$HOME/.bashrc"
 MARKER="# >>> bash-scripts config >>>"
 # ---------------
 
-# 1) 有効コマンド一覧から .bash_aliases を生成
+echo "[setup] 開始: すべてのコマンドを再反映します"
+
+# 改行コードをLFに強制（Windows CRLF 対応）
+if command -v dos2unix >/dev/null 2>&1; then
+  echo "[setup] 改行コードを修正 (dos2unix)..."
+  dos2unix "$COMMANDS_DIR"/*.sh "$ENABLED_LIST" 2>/dev/null || true
+fi
+
+# .bash_aliases を再生成
 {
-  echo "# Load enabled bash-scripts commands"
+  echo "# 自動生成: 有効な bash コマンド"
   while IFS= read -r cmd; do
     [[ "$cmd" =~ ^#|^$ ]] && continue
     echo "source \"$COMMANDS_DIR/${cmd}.sh\""
   done < "$ENABLED_LIST"
 } > "$ALIAS_FILE"
-echo "[setup] Generated $ALIAS_FILE"
+echo "[setup] .bash_aliases を再生成しました"
 
-# 2) bin/ 以下に wrapper スクリプトを生成
+# bin/ を再生成（古いスクリプトを削除）
 mkdir -p "$BIN_DIR"
+find "$BIN_DIR" -type f -exec rm -f {} \;
+
 while IFS= read -r cmd; do
   [[ "$cmd" =~ ^#|^$ ]] && continue
-  cat > "$BIN_DIR/$cmd" <<EOF
+  WRAPPER="$BIN_DIR/$cmd"
+  cat > "$WRAPPER" <<EOF
 #!/usr/bin/env bash
 source "$COMMANDS_DIR/${cmd}.sh"
 ${cmd} "\$@"
 EOF
-  chmod +x "$BIN_DIR/$cmd"
+  chmod +x "$WRAPPER"
 done < "$ENABLED_LIST"
-echo "[setup] Generated wrappers in $BIN_DIR"
+echo "[setup] bin/ 以下のラッパースクリプトを再生成しました"
 
-# 3) ~/.bashrc に .bash_aliases の読み込みと PATH 追加を追記
+# .bashrc にエイリアス読み込みと PATH を追加（初回のみ）
 if ! grep -Fxq "$MARKER" "$BASHRC"; then
   cat >> "$BASHRC" <<EOF
 
@@ -48,9 +59,9 @@ fi
 export PATH="$BIN_DIR:\$PATH"
 # <<< bash-scripts config <<<
 EOF
-  echo "[setup] Appended alias load and PATH to $BASHRC"
+  echo "[setup] .bashrc に設定を追加しました"
 else
-  echo "[setup] $BASHRC already contains bash-scripts config. Skipped."
+  echo "[setup] .bashrc には既に設定があります（スキップ）"
 fi
 
-echo "[setup] Done. Reload with: source ~/.bashrc"
+echo "[setup] 完了 ✅ 'source ~/.bashrc' を忘れずに！"
