@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-function git_commit() {
+function gitcommit() {
   local msg="${1:-}"
   if [[ -z "$msg" ]]; then
     echo "Usage: git_commit \"Your commit message\""
