@@ -9,7 +9,8 @@ ENABLED_LIST="$BASE_DIR/enabled_commands.conf"
 ALIAS_FILE="$BASE_DIR/.bash_aliases"
 BIN_DIR="$BASE_DIR/bin"
 BASHRC="$HOME/.bashrc"
-MARKER="# >>> bash-scripts config >>>"
+MARKER="# bash-scripts-config-start"
+MARKER_END="# bash-scripts-config-end"
 # ---------------
 
 echo "[setup] 開始: すべてのコマンドを再反映します"
@@ -53,11 +54,11 @@ if ! grep -Fxq "$MARKER" "$BASHRC"; then
 $MARKER
 # load bash-scripts aliases
 if [ -f "$ALIAS_FILE" ]; then
-  source "$ALIAS_FILE"
+  . "$ALIAS_FILE"
 fi
 # include bin in PATH
 export PATH="$BIN_DIR:\$PATH"
-# <<< bash-scripts config <<<
+$MARKER_END
 EOF
   echo "[setup] .bashrc に設定を追加しました"
 else
