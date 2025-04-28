@@ -40,19 +40,24 @@ function gitadd() {
       # ラベル判定
       if [[ "$status" == "??" ]]; then
         label="untracked"
+        #mark="🔍"
+        mark="❓"
       else
         X="${status:0:1}"
         Y="${status:1:1}"
         if   [[ "$X" != " " && "$Y" != " " ]]; then
           label="both"
+          mark="🌓"
         elif [[ "$X" != " " ]]; then
           label="staged"
+          mark="✅"
         else
           label="not stage"
+          mark="🟡"
         fi
       fi
 
-      printf "[%s]\t%s\t%s\n" "$label" "$status" "$path"
+      printf "%s[%s]\t%s\t%s\n" "$mark" "$label" "$status" "$path"
     done | "$fzf_path" --multi --ansi --height=40% --reverse \
                        --with-nth=1,2,3 --delimiter='\t' \
                        --header="⏎: toggle stage    Ctrl-D: diff" \
@@ -80,7 +85,7 @@ function gitadd() {
           *)           echo "❓ Unknown diff target" ;;
         esac
       else
-        # ステージ済みならアンステージ、未ステージならステージ
+        # ステージ済みならアンステージ、未ステージならステージ 
         if git diff --cached --name-only | grep -qx -- "$file"; then
           echo "🔄 Unstage: $file"
           git restore --staged -- "$file"
