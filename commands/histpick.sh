@@ -1,7 +1,10 @@
 function histpick() {
+  # fzfのパスを設定
+  local fzf_path="/c/bin/fzf.exe"
+  
   # `history` コマンドで履歴を取得、行番号を削除して逆順に
   local selected_command
-  selected_command=$(history | awk '{$1=""; print substr($0,2)}' | tac | awk '!a[$0]++' | fzf --height=40% --reverse --prompt='History > ')
+  selected_command=$(history | awk '{$1=""; print substr($0,2)}' | tac | awk '!a[$0]++' | "$fzf_path" --height=40% --reverse --prompt='🔍 > ')
 
   if [[ -n "$selected_command" ]]; then
     echo "------------------------------------------------"

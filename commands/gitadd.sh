@@ -40,7 +40,6 @@ function gitadd() {
       # ラベル判定
       if [[ "$status" == "??" ]]; then
         label="untracked"
-        #mark="🔍"
         mark="❓"
       else
         X="${status:0:1}"
@@ -50,7 +49,7 @@ function gitadd() {
           mark="🌓"
         elif [[ "$X" != " " ]]; then
           label="staged"
-          mark="✔️ "
+          mark="✅"
         else
           label="not stage"
           mark="🟡"
@@ -61,7 +60,8 @@ function gitadd() {
     done | "$fzf_path" --multi --ansi --height=40% --reverse \
                        --with-nth=1,2,3 --delimiter='\t' \
                        --header="⏎: toggle stage    Ctrl-D: diff" \
-                       --expect=ctrl-d
+                       --expect=ctrl-d \
+                       --prompt="🔍 > "
   ); do
     q=$(head -n1 <<< "$out")
     mapfile -t selected_lines < <(tail -n +2 <<< "$out")
