@@ -50,7 +50,7 @@ function gitadd() {
           mark="🌓"
         elif [[ "$X" != " " ]]; then
           label="staged"
-          mark="✅"
+          mark="✔️ "
         else
           label="not stage"
           mark="🟡"
