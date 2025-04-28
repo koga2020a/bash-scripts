@@ -1,5 +1,6 @@
 function cdup() {
   local base_dir
+  local fzf_path="/c/bin/fzf.exe"
 
   if [[ -n "$1" ]]; then
     base_dir="$([[ "$1" == "." ]] && echo "$PWD" || echo "$1")"
@@ -24,9 +25,9 @@ function cdup() {
 
   local selected
   selected=$(printf "%s\n" "${dirs[@]}" | \
-    fzf \
+    "$fzf_path" \
       --header="📁 Base directory: $base_dir" \
-      --prompt="Select subdirectory > " \
+      --prompt="Select SubDir 🔍 > " \
       --height=40% \
       --reverse \
       --preview="[[ -f '$base_dir/{}/README.md' ]] && cat '$base_dir/{}/README.md' || echo 'README.md not found.'" \
